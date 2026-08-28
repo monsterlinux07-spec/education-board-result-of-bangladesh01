@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Board Result of Bangladesh</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #008000;
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+            background: transparent;
+            border-radius: 0;
+            flex-shrink: 0;
+        }
+        .header-text {
+            text-align: left;
+        }
+        .header h2, .header p {
+            margin: 0;
+        }
+        .header h2 {
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .header p {
+            font-size: 12px;
+            margin-top: 3px;
+        }
+        .sub-header {
+            padding: 10px 15px;
+            background: #e9e9e9;
+            font-size: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .form-box {
+            padding: 20px;
+        }
+        .form-group {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        .form-group label {
+            width: 250px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .form-group label.red-text {
+            color: red;
+        }
+        .form-group select, .form-group input {
+            flex: 1;
+            padding: 6px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .captcha-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        #captcha-display {
+            background: #ddd;
+            padding: 5px 15px;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 3px;
+            user-select: none;
+        }
+        .refresh-captcha {
+            cursor: pointer;
+            color: #006400;
+            font-size: 13px;
+            text-decoration: underline;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-submit {
+            background-color: #008000;
+            color: white;
+            padding: 8px 25px;
+            border: none;
+            font-size: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-submit:hover {
+            background-color: #006400;
+        }
+        #error-msg {
+            color: red;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Bangladesh Government Logo">
+        <div class="header-text">
+            <h2 id="site-title">WEB BASED RESULT PUBLICATION SYSTEM FOR EDUCATION BOARD</h2>
+            <p id="site-sub">JSC/JDC/SSC/DAKHIL/HSC/ALIM AND EQUIVALENT EXAMINATION</p>
+        </div>
+    </div>
+
+    <div class="sub-header">
+        [ <a href="#" onclick="toggleLanguage(); return false;" id="lang-link">বাংলা</a> ] | [ <a href="#">Live Web Access Graph</a> ] <br>
+        <span id="instruction-text">Please provide the following information to view result</span>
+    </div>
+
+    <div class="form-box">
+        <div class="form-group">
+            <label id="lbl-board">Name of Board</label>
+            <select id="board-select">
+                <option value="">Select One</option>
+                <option value="Dhaka">Dhaka</option>
+                <option value="Chittagong">Chittagong</option>
+                <option value="Comilla">Comilla</option>
+                <option value="Rajshahi">Rajshahi</option>
+                <option value="Jessore">Jessore</option>
+                <option value="Sylhet">Sylhet</option>
+                <option value="Barisal">Barisal</option>
+                <option value="Dinajpur">Dinajpur</option>
+                <option value="Mymensingh">Mymensingh</option>
+                <option value="Madrasah">Madrasah</option>
+                <option value="Technical">Technical</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-exam">Name of Examination</label>
+            <select id="exam-select">
+                <option value="">Select One</option>
+                <option value="SSC">SSC/Dakhil/Equivalent</option>
+                <option value="HSC">HSC/Alim/Equivalent</option>
+                <option value="JSC">JSC/JDC</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-year">Year of Examination</label>
+            <select id="year-select">
+                <option value="">Select One</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="red-text" id="lbl-type">Type of Result</label>
+            <select id="type-select">
+                <option value="">Select One</option>
+                <option value="Individual">Individual Result</option>
+                <option value="Institution">Institution Result</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-roll">Roll Number</label>
+            <input type="text" id="inp-roll" placeholder="Enter Roll Number / Name">
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-reg">Registration Number</label>
+            <input type="text" id="inp-reg" placeholder="Enter Registration Number">
+        </div>
+
+        <div class="form-group">
+            <label id="lbl-captcha">Robot Prevention Technique (CAPTCHA)</label>
+            <div class="captcha-box">
+                <span id="captcha-display">9809</span>
+                <span class="refresh-captcha" onclick="generateCaptcha()">Reload</span>
+                <input type="text" id="inp-captcha" placeholder="Type the digits visible on the image">
+            </div>
+        </div>
+
+        <div id="error-msg"></div>
+
+        <div class="btn-container">
+            <button class="btn-submit" id="btn-view" onclick="validateAndShowResult()">View Result</button>
+            <button class="btn-submit" id="btn-reset" style="background-color: #dc3545; margin-left: 10px;" onclick="resetForm()">Reset</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'en';
+
+    document.addEventListener("DOMContentLoaded", function() {
+        generateCaptcha();
+        loadYears();
+    });
+
+    function loadYears() {
+        const yearSelect = document.getElementById('year-select');
+        const currentYear = new Date().getFullYear();
+        for (let year = currentYear; year >= 1996; year--) {
+            let option = document.createElement('option');
+            option.value = year;
+            option.innerText = year;
+            yearSelect.appendChild(option);
+        }
+    }
+
+    function generateCaptcha() {
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('captcha-display').innerText = randomNum;
+    }
+
+    function validateAndShowResult() {
+        const board = document.getElementById('board-select').value;
+        const exam = document.getElementById('exam-select').value;
+        const year = document.getElementById('year-select').value;
+        const type = document.getElementById('type-select').value;
+        const roll = document.getElementById('inp-roll').value.trim();
+        const reg = document.getElementById('inp-reg').value.trim();
+        const userCaptcha = document.getElementById('inp-captcha').value.trim();
+        const actualCaptcha = document.getElementById('captcha-display').innerText;
+        const errorDiv = document.getElementById('error-msg');
+
+        if (board === "" || exam === "" || year === "" || type === "") {
+            errorDiv.innerText = "Please select all required fields (Board, Exam, Year, Type)!";
+            return;
+        }
+        if (roll === "") {
+            errorDiv.innerText = "Please enter your Roll Number!";
+            return;
+        }
+        if (reg === "") {
+            errorDiv.innerText = "Please enter your Registration Number!";
+            return;
+        }
+        if (userCaptcha !== actualCaptcha) {
+            errorDiv.innerText = "Captcha does not match! Please try again.";
+            generateCaptcha();
+            return;
+        }
+
+        errorDiv.innerText = "";
+        // রোল এবং রেজিস্ট্রেশন নম্বর দুটোই একসাথে ইউআরএলে পাঠানো হচ্ছে
+        window.location.href = `/result?roll=${encodeURIComponent(roll)}&reg=${encodeURIComponent(reg)}`;
+    }
+
+    function resetForm() {
+        document.getElementById('board-select').value = "";
+        document.getElementById('exam-select').value = "";
+        document.getElementById('year-select').value = "";
+        document.getElementById('type-select').value = "";
+        document.getElementById('inp-roll').value = "";
+        document.getElementById('inp-reg').value = "";
+        document.getElementById('inp-captcha').value = "";
+        document.getElementById('error-msg').innerText = "";
+        generateCaptcha();
+    }
+
+    function toggleLanguage() {
+        if (currentLang === 'en') {
+            document.getElementById('site-title').innerText = "শিক্ষা বোর্ডের ফলাফল প্রকাশ সিস্টেম";
+            document.getElementById('site-sub').innerText = "জেএসসি / জেডিসি / এসএসসি / দাখিল / এইচএসসি / আলিম এবং সমমান পরীক্ষা";
+            document.getElementById('instruction-text').innerText = "ফলাফল দেখতে নিচের তথ্যগুলো প্রদান করুন";
+            document.getElementById('lbl-board').innerText = "বোর্ডের নাম";
+            document.getElementById('lbl-exam').innerText = "পরীক্ষার নাম";
+            document.getElementById('lbl-year').innerText = "পরীক্ষার সাল";
+            document.getElementById('lbl-type').innerText = "ফলাফলের ধরণ";
+            document.getElementById('lbl-roll').innerText = "রোল নম্বর";
+            document.getElementById('lbl-reg').innerText = "রেজিস্ট্রেশন নম্বর";
+            document.getElementById('lbl-captcha').innerText = "রোবট প্রতিরোধক কৌশল (ক্যাপচা)";
+            document.getElementById('inp-roll').placeholder = "রোল নম্বর লিখুন";
+            document.getElementById('inp-reg').placeholder = "রেজিস্ট্রেশন নম্বর লিখুন";
+            document.getElementById('inp-captcha').placeholder = "ছবিতে দৃশ্যমান সংখ্যাগুলো লিখুন";
+            document.getElementById('btn-view').innerText = "ফলাফল দেখুন";
+            document.getElementById('btn-reset').innerText = "রিসেট";
+            document.getElementById('lang-link').innerText = "English";
+            currentLang = 'bn';
+        } else {
+            popLabelsBackToEnglish();
+            currentLang = 'en';
+        }
+    }
+
+    function popLabelsBackToEnglish() {
+        document.getElementById('site-title').innerText = "WEB BASED RESULT PUBLICATION SYSTEM FOR EDUCATION BOARD";
+        document.getElementById('site-sub').innerText = "JSC/JDC/SSC/DAKHIL/HSC/ALIM AND EQUIVALENT EXAMINATION";
+        document.getElementById('instruction-text').innerText = "Please provide the following information to view result";
+        document.getElementById('lbl-board').innerText = "Name of Board";
+        document.getElementById('lbl-exam').innerText = "Name of Examination";
+        document.getElementById('lbl-year').innerText = "Year of Examination";
+        document.getElementById('lbl-type').innerText = "Type of Result";
+        document.getElementById('lbl-roll').innerText = "Roll Number";
+        document.getElementById('lbl-reg').innerText = "Registration Number";
+        document.getElementById('lbl-captcha').innerText = "Robot Prevention Technique (CAPTCHA)";
+        document.getElementById('inp-roll').placeholder = "Enter Roll Number";
+        document.getElementById('inp-reg').placeholder = "Enter Registration Number";
+        document.getElementById('inp-captcha').placeholder = "Type the digits visible on the image";
+        document.getElementById('btn-view').innerText = "View Result";
+        document.getElementById('btn-reset').innerText = "Reset";
+        document.getElementById('lang-link').innerText = "বাংলা";
+    }
+</script>
+
+</body>
+</html>
